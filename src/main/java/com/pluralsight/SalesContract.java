@@ -1,59 +1,79 @@
 package com.pluralsight;
 
-public class SalesContract extends Contract{
-    private static final double SALES_TAX_PERCENTAGE = 0.05;
-    private static final double RECORDING_FEE = 100.0;
-    private static final double PROCESSING_FEE_UNDER_10000 = 295.0;
-    private static final double PROCESSING_FEE_ABOVE_10000 = 495.0;
+import com.pluralsight.Contract;
+import com.pluralsight.Vehicle;
 
-    private boolean isFinanced;
-    private double loanInterestRate;
-    private int loanDurationMonths;
+public class SalesContract extends Contract {
+    private double salesTaxAmount;  //5%
+    private double recordingFee;    //$100
+    private double processingFee;   //$295 for vehicles under $10,000 and $495 for all others
+    private boolean financeOption;        //yes/no
 
-    public SalesContract(String date, String customerName, String customerEmail, boolean sold, double totalPrice,  boolean isFinanced) {
-        super(date, customerName, customerEmail, totalPrice, sold);
-        this.isFinanced = isFinanced;
+    public SalesContract(String dateOfContract, String customerName, String customerEmail, Vehicle vehicleSold, boolean financeOption) {
+        super(dateOfContract, customerName, customerEmail, vehicleSold);
+        this.financeOption = financeOption;
 
-        if (getTotalPrice() >= 10000) {
-            this.loanInterestRate = 0.0425; // 4.25% for loans of 48 months
-            this.loanDurationMonths = 48;
-        } else {
-            this.loanInterestRate = 0.0525; // 5.25% for loans of 24 months
-            this.loanDurationMonths = 24;
-        }
+    }
+
+    public double getSalesTaxAmount() {
+        return salesTaxAmount;
+    }
+
+    public void setSalesTaxAmount(double salesTaxAmount) {
+        this.salesTaxAmount = salesTaxAmount;
+    }
+
+    public double getRecordingFee() {
+        return recordingFee;
+    }
+
+    public void setRecordingFee(double recordingFee) {
+        this.recordingFee = recordingFee;
+    }
+
+    public double getProcessingFee() {
+        return processingFee;
+    }
+
+    public void setProcessingFee(double processingFee) {
+        this.processingFee = processingFee;
+    }
+
+    public boolean isFinanceOption() {
+        return financeOption;
+    }
+
+    public void setFinanceOption(boolean financeOption) {
+        this.financeOption = financeOption;
     }
 
     @Override
     public double getTotalPrice() {
-        double totalPrice = getTotalPrice();
-
-        double salesTax = totalPrice * SALES_TAX_PERCENTAGE;
-        double processingFee = (totalPrice >= 10000) ? PROCESSING_FEE_ABOVE_10000 : PROCESSING_FEE_UNDER_10000;
-
-        totalPrice += salesTax + RECORDING_FEE + processingFee;
-
-        if (!isFinanced) {
-            return totalPrice;
-        }
-
-        return totalPrice;
+        return getVehicleSold().getPrice() + salesTaxAmount + recordingFee + processingFee;
     }
 
     @Override
     public double getMonthlyPayment() {
-        if (!isFinanced) {
-            return 0;
-        }
+        int numberOfPayments = 0;
+        double interestRate = 0;
+        if (financeOption) {
+            if (getVehicleSold().getPrice() >= 10000) {
+                numberOfPayments = 48;
+                interestRate = 4.25 / 1200;
+            } else {
+                numberOfPayments = 24;
+                interestRate = 5.25 / 1200;
+            }
 
-        double totalPrice = getTotalPrice();
-        double monthlyPayment;
-
-        if (totalPrice >= 10000) {
-            monthlyPayment = (this.loanInterestRate / 12) * totalPrice / (1 - Math.pow(1 + this.loanInterestRate / 12, -this.loanDurationMonths));
+            double monthlyPayment = getTotalPrice() * (interestRate * Math.pow(1 + interestRate, numberOfPayments)) / (Math.pow(1 + interestRate, numberOfPayments) - 1);
+            monthlyPayment = Math.round(monthlyPayment * 100);
+            monthlyPayment /= 100;
+            return monthlyPayment;
         } else {
-            monthlyPayment = (this.loanInterestRate / 12) * totalPrice / (1 - Math.pow(1 + this.loanInterestRate / 12, -this.loanDurationMonths));
+            return 0.0;
         }
-
-        return monthlyPayment;
     }
+
+
 }
+

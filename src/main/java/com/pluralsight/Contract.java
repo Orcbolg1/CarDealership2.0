@@ -1,28 +1,28 @@
 package com.pluralsight;
 
-public abstract class  Contract {
-    private String date;
+
+
+public abstract class Contract {
+    private String dateOfContract;
     private String customerName;
     private String customerEmail;
-    private boolean vehicleSold;
-    private double totalPrice;
-    private double monthlyPayment;
+    private Vehicle vehicleSold;
 
-    public Contract(String date, String customerName, String customerEmail, double totalPrice, boolean vehicleSold) {
-        this.date = date;
+    public Contract(String dateOfContract, String customerName, String customerEmail,
+                    Vehicle vehicleSold) {
+        this.dateOfContract = dateOfContract;
         this.customerName = customerName;
         this.customerEmail = customerEmail;
         this.vehicleSold = vehicleSold;
-        this.totalPrice = 0;
-        this.monthlyPayment = 0;
+
     }
 
-    public String getDate() {
-        return date;
+    public String getDateOfContract() {
+        return dateOfContract;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDateOfContract(String dateOfContract) {
+        this.dateOfContract = dateOfContract;
     }
 
     public String getCustomerName() {
@@ -41,29 +41,17 @@ public abstract class  Contract {
         this.customerEmail = customerEmail;
     }
 
-    public boolean isVehicleSold() {
+    public Vehicle getVehicleSold() {
         return vehicleSold;
     }
 
-    public void setVehicleSold(boolean vehicleSold) {
+    public void setVehicleSold(Vehicle vehicleSold) {
         this.vehicleSold = vehicleSold;
     }
 
-    public abstract double getTotalPrice(); {
-
-    }
-
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public abstract double getMonthlyPayment(); {
-
-    }
-
-    public void setMonthlyPayment(double monthlyPayment) {
-        this.monthlyPayment = monthlyPayment;
-    }
+    public abstract double getTotalPrice();
+    public abstract double getMonthlyPayment();
 
 
+    public abstract boolean isFinanceOption();
 }
